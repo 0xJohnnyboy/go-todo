@@ -71,3 +71,34 @@ func ClearTasks() error {
 
 	return db.Where("1 = 1").Delete(&Task{}).Error
 }
+
+type TaskStats struct {
+	Done      int
+	Total     int
+	PerDayAvg float64
+}
+
+func GetStats() (TaskStats, error) {
+	db, err := getDB()
+	if err != nil {
+		return TaskStats{}, err
+	}
+
+	var stats TaskStats
+	err = db.Raw(`
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN done THEN 1 ELSE 0 END) AS done,
+            (
+                SELECT AVG(cnt) FROM (
+                    SELECT DATE(created_at) as day, COUNT(*) as cnt
+                    FROM tasks
+                    WHERE done
+                    GROUP BY day
+                )
+            ) AS per_day_avg
+        FROM tasks
+    `).Scan(&stats).Error
+
+	return stats, err
+}
