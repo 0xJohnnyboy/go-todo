@@ -5,6 +5,7 @@ import (
     "time"
 )
 
+func AddTask(title string, isDone bool) error {
     if title == "" {
         return errors.New("title is required")
     }
