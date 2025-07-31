@@ -24,18 +24,29 @@ func AddTask(title string, isDone bool) error {
     return err
 }
 
-func ListTasks() ([]Task, error) {
+func ListTasks(showDone bool, showUndone bool) ([]Task, error) {
     db, err := getDB()
     if err != nil {
         return nil, err
     }
     defer db.Close()
 
+
+    var whereClause string
+    switch {
+        case !showDone && !showUndone:
+        case showDone && showUndone:
+        case showDone :
+            whereClause = "WHERE done = 1"
+        case showUndone:
+            whereClause = "WHERE done = 0"
+    }
     rows, err := db.Query(`
         SELECT id, title, done, created_at, updated_at
         FROM tasks
+        ` + whereClause + `
         ORDER BY created_at DESC
-    `)
+    `) 
 
     if err != nil {
         return nil, err

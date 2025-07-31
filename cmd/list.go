@@ -8,13 +8,15 @@ import (
     "todo/internal/todo"
 )
 
+var showDoneFlag bool
+var showUndoneFlag bool
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "lists existing tasks",
 	Long: `retrieves tasks from the database and prints them`,
 	Run: func(cmd *cobra.Command, args []string) {
-        tasks, err := todo.ListTasks()
+        tasks, err := todo.ListTasks(showDoneFlag, showUndoneFlag)
         if err != nil {
             fmt.Println(err)
             return
@@ -36,6 +38,8 @@ var listCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(listCmd)
+    listCmd.Flags().BoolVarP(&showDoneFlag, "done", "d", false, "Show only done tasks")
+    listCmd.Flags().BoolVarP(&showUndoneFlag, "undone", "u", false, "Show only undone tasks")
 
 	// Here you will define your flags and configuration settings.
 
