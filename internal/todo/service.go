@@ -3,122 +3,116 @@ package todo
 import (
     "errors"
     "time"
-    "fmt"
-    "strconv"
 )
 
-func AddTask(title string) error {
     if title == "" {
         return errors.New("title is required")
     }
 
-    tasks, err := LoadTasks()
-
+    db, err := getDB()
     if err != nil {
         return err
     }
+    defer db.Close()
+    now := time.Now()
+    _, err = db.Exec(`
+    INSERT INTO tasks (title, done, created_at, updated_at) 
+    VALUES (?, ?, ?, ?)
+    `, title, isDone, now, now)
 
-    newId := getNextId(tasks)
-
-    task := Task{
-        Id: newId,
-        Title: title,
-        Done: false,
-        CreatedAt: time.Now(),
-        UpdatedAt: time.Now(),
-    }
-
-    tasks = append(tasks, task)
-
-    return SaveTasks(tasks)
+    return err
 }
 
-func ListTasks() error {
-    tasks, err := LoadTasks()
+func ListTasks() ([]Task, error) {
+    db, err := getDB()
+    if err != nil {
+        return nil, err
+    }
+    defer db.Close()
+
+    rows, err := db.Query(`
+        SELECT id, title, done, created_at, updated_at
+        FROM tasks
+        ORDER BY created_at DESC
+    `)
+
+    if err != nil {
+        return nil, err
+    }
+
+    var tasks []Task
+
+    for rows.Next() {
+        var task Task
+        err = rows.Scan(&task.Id, &task.Title, &task.Done, &task.CreatedAt, &task.UpdatedAt)
+        if err != nil {
+            return nil, err
+        }
+        tasks = append(tasks, task)
+    }
+
+    return tasks, nil
+}
+
+func DoneTask(id string) error {
+    db, err := getDB()
+    
     if err != nil {
         return err
     }
+    defer db.Close()
 
-    if len(tasks) == 0 {
-        fmt.Println("No tasks")
-        return nil
-    }
+    result, err := db.Exec(`
+        UPDATE tasks
+        SET done = ?, updated_at = ?
+        WHERE id = ?
+    `, true, time.Now(), id)
 
-    for _, task := range tasks {
-        fmt.Printf("%d: %s\n", task.Id, task.Title)
-        fmt.Printf("  Done: %t\n", task.Done)
-        fmt.Printf("  Created at: %s\n", task.CreatedAt.Format(time.RFC3339))
-        fmt.Printf("  Updated at: %s\n", task.UpdatedAt.Format(time.RFC3339))
+    if err != nil {
+        return err
+    } 
+
+    count, _ := result.RowsAffected()
+    
+    if count == 0 {
+        return errors.New("task not found")
     }
 
     return nil
 }
 
-func DoneTask(id string) error {
-    tasks, err := LoadTasks()
-
-    if err != nil {
-        return err
-    }
-
-    intId, err := strconv.Atoi(id)
-    if err != nil {
-        return err
-    }
-
-    for i, task := range tasks {
-        if task.Id == intId {
-            tasks[i].Done = true
-            tasks[i].UpdatedAt = time.Now()
-            return SaveTasks(tasks)
-        }
-    }
-    
-    err = errors.New("task not found")
-    return err
-}
-
 func DeleteTask(id string) error {
-    tasks, err := LoadTasks()
-
+    db, err := getDB()
     if err != nil {
         return err
     }
+    defer db.Close()
 
-    intId, err := strconv.Atoi(id)
-    if err != nil {
-        return err
+    result, err := db.Exec(`
+        DELETE FROM tasks
+        WHERE id = ?
+    `, id)
+
+    count, _ := result.RowsAffected()
+    if count == 0 {
+        return errors.New("task not found")
     }
-
-    var newTasks []Task
-
-    for _, task := range tasks {
-        if task.Id == intId {
-            continue
-        }
-        newTasks = append(newTasks, task)
-    }
-
-    return SaveTasks(newTasks)
+    return nil
 }
 
 func ClearTasks() error {
-    _, err := LoadTasks()
-
+    db, err := getDB()
     if err != nil {
         return err
+    } 
+    defer db.Close()
+
+    result, err := db.Exec(`
+        DELETE FROM tasks
+    `)
+    count, _ := result.RowsAffected()
+    if count == 0 {
+        return errors.New("no tasks to clear")
     }
-
-    return SaveTasks([]Task{})
-}
-
-
-func getNextId(tasks []Task) int {
-    maxId := 0
-    for _, task := range tasks {
-        if task.Id > maxId {
-            maxId = task.Id
-        }
-    }
-    return maxId + 1
+    return nil
 }
