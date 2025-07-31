@@ -2,7 +2,6 @@ package todo
 
 import (
     "errors"
-    "time"
 )
 
 func AddTask(title string, isDone bool) error {
@@ -14,14 +13,13 @@ func AddTask(title string, isDone bool) error {
     if err != nil {
         return err
     }
-    defer db.Close()
-    now := time.Now()
-    _, err = db.Exec(`
-    INSERT INTO tasks (title, done, created_at, updated_at) 
-    VALUES (?, ?, ?, ?)
-    `, title, isDone, now, now)
 
-    return err
+    task := Task{
+        Title: title,
+        Done: isDone,
+    }
+
+    return db.Create(&task).Error
 }
 
 func ListTasks(showDone bool, showUndone bool) ([]Task, error) {
@@ -29,41 +27,19 @@ func ListTasks(showDone bool, showUndone bool) ([]Task, error) {
     if err != nil {
         return nil, err
     }
-    defer db.Close()
-
-
-    var whereClause string
-    switch {
-        case !showDone && !showUndone:
-        case showDone && showUndone:
-        case showDone :
-            whereClause = "WHERE done = 1"
-        case showUndone:
-            whereClause = "WHERE done = 0"
-    }
-    rows, err := db.Query(`
-        SELECT id, title, done, created_at, updated_at
-        FROM tasks
-        ` + whereClause + `
-        ORDER BY created_at DESC
-    `) 
-
-    if err != nil {
-        return nil, err
-    }
 
     var tasks []Task
-
-    for rows.Next() {
-        var task Task
-        err = rows.Scan(&task.Id, &task.Title, &task.Done, &task.CreatedAt, &task.UpdatedAt)
-        if err != nil {
-            return nil, err
-        }
-        tasks = append(tasks, task)
+    q := db.Order("created_at DESC")
+    switch {
+    case !showDone && !showUndone, showDone && showUndone:
+    case showDone :
+        q = q.Where("done = ?", true)
+    case showUndone:
+        q = q.Where("done = ?", false)
     }
 
-    return tasks, nil
+    err = q.Find(&tasks).Error
+    return tasks, err
 }
 
 func DoneTask(id string) error {
@@ -72,25 +48,8 @@ func DoneTask(id string) error {
     if err != nil {
         return err
     }
-    defer db.Close()
 
-    result, err := db.Exec(`
-        UPDATE tasks
-        SET done = ?, updated_at = ?
-        WHERE id = ?
-    `, true, time.Now(), id)
-
-    if err != nil {
-        return err
-    } 
-
-    count, _ := result.RowsAffected()
-    
-    if count == 0 {
-        return errors.New("task not found")
-    }
-
-    return nil
+    return db.Model(&Task{}).Where("id = ?", id).Update("done", true).Error
 }
 
 func DeleteTask(id string) error {
@@ -98,18 +57,8 @@ func DeleteTask(id string) error {
     if err != nil {
         return err
     }
-    defer db.Close()
 
-    result, err := db.Exec(`
-        DELETE FROM tasks
-        WHERE id = ?
-    `, id)
-
-    count, _ := result.RowsAffected()
-    if count == 0 {
-        return errors.New("task not found")
-    }
-    return nil
+    return db.Delete(&Task{}, id).Error
 }
 
 func ClearTasks() error {
@@ -117,14 +66,6 @@ func ClearTasks() error {
     if err != nil {
         return err
     } 
-    defer db.Close()
 
-    result, err := db.Exec(`
-        DELETE FROM tasks
-    `)
-    count, _ := result.RowsAffected()
-    if count == 0 {
-        return errors.New("no tasks to clear")
-    }
-    return nil
+    return db.Where("1 = 1").Delete(&Task{}).Error
 }
