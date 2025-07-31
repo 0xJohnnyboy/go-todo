@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
     "time"
+    "strings" 
 
 	"github.com/spf13/cobra"
     "todo/internal/todo"
@@ -27,11 +28,35 @@ var listCmd = &cobra.Command{
             return
         }
 
+        var outputHeader string
+        switch {
+        case showAllFlag:
+            outputHeader = fmt.Sprintf("All Tasks (%d)", len(tasks))
+        case showDoneFlag:
+            outputHeader = fmt.Sprintf("Completed Tasks (%d)", len(tasks))
+        default:
+            outputHeader = fmt.Sprintf("Todo Tasks (%d)", len(tasks))
+        }
+
+        fmt.Println(outputHeader)
+        fmt.Println(strings.Repeat("=", len(outputHeader)))
+        fmt.Println()
+
+        var doneEmoji string
         for _, task := range tasks {
+            header := fmt.Sprintf("%d: %s", task.Id, task.Title)
             fmt.Printf("%d: %s\n", task.Id, task.Title)
-            fmt.Printf("  Done: %t\n", task.Done)
+            separator := strings.Repeat("-", len(header))
+            fmt.Printf("%s\n", separator)
+            if task.Done {
+                doneEmoji = "✅"
+            } else {
+                doneEmoji = "❌"
+            }
+            fmt.Printf("  Done: %s\n", doneEmoji)
             fmt.Printf("  Created at: %s\n", task.CreatedAt.Format(time.RFC3339))
             fmt.Printf("  Updated at: %s\n", task.UpdatedAt.Format(time.RFC3339))
+            fmt.Println()
         }
 	},
 }
