@@ -19,6 +19,7 @@ func RegisterRoutes(r *gin.Engine){
     r.PUT("/tasks/:id", UpdateTaskHandler)
     r.DELETE("/tasks/:id", DeleteTaskHandler)
     r.POST("/tasks/:id/complete", CompleteTaskHandler)
+	r.GET("/tasks/stats", GetTaskStatsHandler)
 }
 
 func GetAllTasksHandler(c *gin.Context){
@@ -106,4 +107,15 @@ func CompleteTaskHandler(c *gin.Context){
         return
     }
     c.Status(http.StatusNoContent)
+}
+
+func GetTaskStatsHandler(c *gin.Context){
+	stats, err := GetStats()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, stats)
 }
