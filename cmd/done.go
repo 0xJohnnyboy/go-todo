@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-    "todo/internal/logic"
+    "todo/internal/task"
 )
 
 // doneCmd represents the done command
@@ -13,7 +13,7 @@ var doneCmd = &cobra.Command{
 	Short: "marks a task as done",
 	Long: `marks a task as done and saves the changes`,
 	Run: func(cmd *cobra.Command, args []string) {
-        err := logic.DoneTask(args[0])
+        err := task.DoneTask(args[0])
         if err != nil {
             fmt.Println(err)
             return

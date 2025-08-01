@@ -1,4 +1,4 @@
-package models
+package db
 import "time"
 
 type Task struct {

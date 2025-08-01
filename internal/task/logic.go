@@ -1,9 +1,8 @@
-package logic
+package task
 
 import (
 	"errors"
-	. "todo/internal/models"
-	d "todo/internal/db"
+	. "todo/internal/db"
 )
 
 func AddTask(title string, isDone bool) (*Task, error) {
@@ -11,7 +10,7 @@ func AddTask(title string, isDone bool) (*Task, error) {
 		return nil, errors.New("title is required")
 	}
 
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +24,7 @@ func AddTask(title string, isDone bool) (*Task, error) {
 }
 
 func UpdateTask(id string, title string, isDone bool) (*Task, error) {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +43,7 @@ func UpdateTask(id string, title string, isDone bool) (*Task, error) {
 }
 
 func GetTaskById(id string) (*Task, error) {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +53,7 @@ func GetTaskById(id string) (*Task, error) {
 }
 
 func ListTasks(showDone bool, showAll bool) ([]Task, error) {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +75,7 @@ func ListTasks(showDone bool, showAll bool) ([]Task, error) {
 }
 
 func DoneTask(id string) error {
-	db, err := d.GetDB()
+	db, err := GetDB()
 
 	if err != nil {
 		return err
@@ -86,7 +85,7 @@ func DoneTask(id string) error {
 }
 
 func DeleteTask(id string) error {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return err
 	}
@@ -95,7 +94,7 @@ func DeleteTask(id string) error {
 }
 
 func ClearTasks() error {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return err
 	}
@@ -110,7 +109,7 @@ type TaskStats struct {
 }
 
 func GetStats() (TaskStats, error) {
-	db, err := d.GetDB()
+	db, err := GetDB()
 	if err != nil {
 		return TaskStats{}, err
 	}
