@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-    "todo/internal/todo"
+    "todo/internal/logic"
 )
 
 var clearCmd = &cobra.Command{
@@ -12,7 +12,7 @@ var clearCmd = &cobra.Command{
 	Short: "clears the list",
 	Long: `clears the list and saves the changes`,
 	Run: func(cmd *cobra.Command, args []string) {
-        err := todo.ClearTasks()
+        err := logic.ClearTasks()
         if err != nil {
             fmt.Println(err)
             return

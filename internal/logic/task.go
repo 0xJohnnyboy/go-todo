@@ -1,7 +1,9 @@
-package todo
+package logic
 
 import (
 	"errors"
+	. "todo/internal/models"
+	d "todo/internal/db"
 )
 
 func AddTask(title string, isDone bool) (*Task, error) {
@@ -9,7 +11,7 @@ func AddTask(title string, isDone bool) (*Task, error) {
 		return nil, errors.New("title is required")
 	}
 
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -23,36 +25,36 @@ func AddTask(title string, isDone bool) (*Task, error) {
 }
 
 func UpdateTask(id string, title string, isDone bool) (*Task, error) {
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return nil, err
 	}
 
-    var task Task
-    db.First(&task, id)
-    if task == (Task{}) {
-        return nil, errors.New("task not found")
-    }
+	var task Task
+	db.First(&task, id)
+	if task == (Task{}) {
+		return nil, errors.New("task not found")
+	}
 	if title != "" {
 		task.Title = title
 	}
-    task.Done = isDone
+	task.Done = isDone
 
 	return &task, db.Save(&task).Error
 }
 
 func GetTaskById(id string) (*Task, error) {
-    db, err := getDB()
-    if err != nil {
-        return nil, err
-    }
-    var task Task
-    err = db.Where("id = ?", id).First(&task).Error
-    return &task, err
+	db, err := d.GetDB()
+	if err != nil {
+		return nil, err
+	}
+	var task Task
+	err = db.Where("id = ?", id).First(&task).Error
+	return &task, err
 }
 
 func ListTasks(showDone bool, showAll bool) ([]Task, error) {
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +76,7 @@ func ListTasks(showDone bool, showAll bool) ([]Task, error) {
 }
 
 func DoneTask(id string) error {
-	db, err := getDB()
+	db, err := d.GetDB()
 
 	if err != nil {
 		return err
@@ -84,7 +86,7 @@ func DoneTask(id string) error {
 }
 
 func DeleteTask(id string) error {
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return err
 	}
@@ -93,7 +95,7 @@ func DeleteTask(id string) error {
 }
 
 func ClearTasks() error {
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return err
 	}
@@ -108,7 +110,7 @@ type TaskStats struct {
 }
 
 func GetStats() (TaskStats, error) {
-	db, err := getDB()
+	db, err := d.GetDB()
 	if err != nil {
 		return TaskStats{}, err
 	}

@@ -1,4 +1,4 @@
-package todo
+package models
 import "time"
 
 type Task struct {
@@ -17,4 +17,10 @@ type TaskCreateInput struct {
 type TaskUpdateInput struct {
     Title string `json:"title"`
     Done bool `json:"done"`
+}
+
+type TaskStatsOutput struct {
+	Done      int
+	Total     int
+	PerDayAvg float64
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"todo/internal/todo"
+	"todo/internal/logic"
 )
 
 var statsCmd = &cobra.Command{
@@ -12,7 +12,7 @@ var statsCmd = &cobra.Command{
 	Short: "show stats about tasks",
 	Long:  `show a summary of tasks, their status, number of tasks per day average, and completion rate`,
 	Run: func(cmd *cobra.Command, args []string) {
-		stats, err := todo.GetStats()
+		stats, err := logic.GetStats()
 		if err != nil {
 			fmt.Println(err)
 		}

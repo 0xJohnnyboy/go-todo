@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-    "todo/internal/todo"
+    api "todo/internal/api"
 )
 
 var portFlag int
@@ -19,7 +19,7 @@ var serveCmd = &cobra.Command{
 			fmt.Println("Not implemented yet")
 			return
 		}
-        todo.ServeApi(portFlag)
+        api.Serve(portFlag)
 	},
 }
 
