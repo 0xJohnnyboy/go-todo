@@ -1,12 +1,14 @@
-package todo
+package db
 
 import (
     "gorm.io/driver/sqlite"
     "gorm.io/gorm"
+	. "todo/internal/models"
 )
 
 var dbName = "todo.db"
-func getDB() (*gorm.DB, error) {
+
+func GetDB() (*gorm.DB, error) {
     db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
     if err != nil {
         return nil, err

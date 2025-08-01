@@ -4,7 +4,7 @@ import (
 	"fmt"
     "strings"
 	"github.com/spf13/cobra"
-    "todo/internal/todo"
+    "todo/internal/logic"
 )
 
 var doneFlag bool
@@ -15,7 +15,7 @@ var addCmd = &cobra.Command{
 	Long: `adds a task to the list as undone`,
 	Run: func(cmd *cobra.Command, args []string) {
         title := strings.Join(args, " ")
-        task , err := todo.AddTask(title, doneFlag)
+        task , err := logic.AddTask(title, doneFlag)
         if err != nil {
             fmt.Println(err)
             return

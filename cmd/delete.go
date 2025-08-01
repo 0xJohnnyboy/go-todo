@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-    "todo/internal/todo"
+    "todo/internal/logic"
 )
 
 var deleteCmd = &cobra.Command{
@@ -12,7 +12,7 @@ var deleteCmd = &cobra.Command{
 	Short: "removes a task from the list",
 	Long: `removes a task from the list and saves the changes`,
 	Run: func(cmd *cobra.Command, args []string) {
-        err := todo.DeleteTask(args[0])
+        err := logic.DeleteTask(args[0])
         if err != nil {
             fmt.Println(err)
             return
