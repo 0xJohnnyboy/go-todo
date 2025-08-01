@@ -3,7 +3,6 @@ package db
 import (
     "gorm.io/driver/sqlite"
     "gorm.io/gorm"
-	. "todo/internal/models"
 )
 
 var dbName = "todo.db"

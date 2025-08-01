@@ -1,10 +1,9 @@
-package controllers
+package task
 
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-	. "todo/internal/models"
-	. "todo/internal/logic"
+	. "todo/internal/db"
 )
 
 func GetAllTasksHandler(c *gin.Context){

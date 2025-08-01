@@ -6,7 +6,7 @@ import (
     "strings" 
 
 	"github.com/spf13/cobra"
-    "todo/internal/logic"
+    "todo/internal/task"
 )
 
 var showDoneFlag bool
@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Short: "lists existing tasks",
 	Long: `retrieves tasks from the database and prints them`,
 	Run: func(cmd *cobra.Command, args []string) {
-        tasks, err := logic.ListTasks(showDoneFlag, showAllFlag)
+        tasks, err := task.ListTasks(showDoneFlag, showAllFlag)
         if err != nil {
             fmt.Println(err)
             return
