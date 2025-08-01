@@ -8,3 +8,13 @@ type Task struct {
     CreatedAt time.Time
     UpdatedAt time.Time
 }
+
+type TaskCreateInput struct {
+    Title string `json:"title"`
+    Done bool `json:"done"`
+}
+
+type TaskUpdateInput struct {
+    Title string `json:"title"`
+    Done bool `json:"done"`
+}

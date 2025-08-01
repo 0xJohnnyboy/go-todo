@@ -4,14 +4,14 @@ import (
 	"errors"
 )
 
-func AddTask(title string, isDone bool) error {
+func AddTask(title string, isDone bool) (*Task, error) {
 	if title == "" {
-		return errors.New("title is required")
+		return nil, errors.New("title is required")
 	}
 
 	db, err := getDB()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	task := Task{
@@ -19,7 +19,36 @@ func AddTask(title string, isDone bool) error {
 		Done:  isDone,
 	}
 
-	return db.Create(&task).Error
+	return &task, db.Create(&task).Error
+}
+
+func UpdateTask(id string, title string, isDone bool) (*Task, error) {
+	db, err := getDB()
+	if err != nil {
+		return nil, err
+	}
+
+    var task Task
+    db.First(&task, id)
+    if task == (Task{}) {
+        return nil, errors.New("task not found")
+    }
+	if title != "" {
+		task.Title = title
+	}
+    task.Done = isDone
+
+	return &task, db.Save(&task).Error
+}
+
+func GetTaskById(id string) (*Task, error) {
+    db, err := getDB()
+    if err != nil {
+        return nil, err
+    }
+    var task Task
+    err = db.Where("id = ?", id).First(&task).Error
+    return &task, err
 }
 
 func ListTasks(showDone bool, showAll bool) ([]Task, error) {

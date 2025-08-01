@@ -15,12 +15,12 @@ var addCmd = &cobra.Command{
 	Long: `adds a task to the list as undone`,
 	Run: func(cmd *cobra.Command, args []string) {
         title := strings.Join(args, " ")
-        err := todo.AddTask(title, doneFlag)
+        task , err := todo.AddTask(title, doneFlag)
         if err != nil {
             fmt.Println(err)
             return
         }
-        fmt.Println("task added")
+        fmt.Printf("task added with Id:%d\n", task.Id)
 	},
 }
 
