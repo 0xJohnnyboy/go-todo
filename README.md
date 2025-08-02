@@ -20,7 +20,8 @@ A minimal, idiomatic CLI and REST API Todo application written in Go, using GORM
 │   ├── list.go
 │   ├── root.go
 │   ├── serve.go
-│   └── stats.go
+│   ├── stats.go
+│   └── version.go
 ├── go.mod
 ├── go.sum
 ├── internal
@@ -29,9 +30,11 @@ A minimal, idiomatic CLI and REST API Todo application written in Go, using GORM
 │   ├── db
 │   │   ├── gormdb.go
 │   │   └── task-models.go
-│   └── task
-│       ├── handlers.go
-│       └── logic.go
+│   ├── task
+│   │   ├── handlers.go
+│   │   └── logic.go
+│   └── version
+│       └── version.go
 ├── LICENSE
 ├── main.go # app entry point
 ├── Makefile # build commands
@@ -44,7 +47,7 @@ A minimal, idiomatic CLI and REST API Todo application written in Go, using GORM
 ```bash
 git clone https://github.com/0xJohnnyboy/go-todo.git
 cd go-todo
-make [build|build-windows|build-linux]
+make [build|build-macos|build-windows|build-linux]
 ```
 
 ## 🚀 Usage
@@ -55,6 +58,9 @@ Assuming your exe is named `todo` and is in your `$PATH`, you can run the follow
 ```bash
 # Show help
 todo [command?] [-h|--help]
+
+# Show version
+todo version
 
 # Add a task
 todo add "Buy milk"
