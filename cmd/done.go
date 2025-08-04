@@ -4,21 +4,26 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-    "todo/internal/task"
+	"todo/internal/task"
 )
 
-// doneCmd represents the done command
 var doneCmd = &cobra.Command{
 	Use:   "done",
-	Short: "marks a task as done",
-	Long: `marks a task as done and saves the changes`,
+	Short: "marks one or more tasks as done",
+	Long:  `marks one or more tasks as done and saves the changes`,
 	Run: func(cmd *cobra.Command, args []string) {
-        err := task.DoneTask(args[0])
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
-        fmt.Println("task marked as done")
+		if len(args) == 0 {
+			fmt.Println("missing arguments")
+			return
+		}
+		for _, arg := range args {
+			err := task.DoneTask(arg)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Printf("task %s marked as done.\n", arg)
+		}
 	},
 }
 
