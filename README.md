@@ -31,8 +31,8 @@ A minimal, idiomatic CLI and REST API Todo application written in Go, using GORM
 │   │   ├── gormdb.go
 │   │   └── task-models.go
 │   ├── task
-│   │   ├── handlers.go
-│   │   └── logic.go
+│   │   ├── http.go
+│   │   └── service.go
 │   └── version
 │       └── version.go
 ├── LICENSE
