@@ -3,7 +3,6 @@ package task
 import (
     "net/http"
     "github.com/gin-gonic/gin"
-	. "todo/internal/db"
 )
 
 func GetAllTasksHandler(c *gin.Context){
@@ -47,7 +46,7 @@ func CreateTaskHandler(c *gin.Context){
     }
 
     c.JSON(http.StatusCreated, gin.H{
-        "id": task.Id,
+        "id": task.ID,
     })
 }
 

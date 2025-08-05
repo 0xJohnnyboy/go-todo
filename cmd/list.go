@@ -44,8 +44,8 @@ var listCmd = &cobra.Command{
 
         var doneEmoji string
         for _, task := range tasks {
-            header := fmt.Sprintf("%d: %s", task.Id, task.Title)
-            fmt.Printf("%d: %s\n", task.Id, task.Title)
+            header := fmt.Sprintf("%d: %s", task.ID, task.Title)
+            fmt.Printf("%d: %s\n", task.ID, task.Title)
             separator := strings.Repeat("-", len(header))
             fmt.Printf("%s\n", separator)
             if task.Done {

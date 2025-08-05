@@ -1,12 +1,14 @@
-package db
-import "time"
+package task 
+
+import (
+	"gorm.io/gorm"
+)
 
 type Task struct {
-    Id uint `gorm:"primaryKey"` 
+	gorm.Model
     Title string `gorm:"not null"`
     Done bool
-    CreatedAt time.Time
-    UpdatedAt time.Time
+	AuthorId uint
 }
 
 type TaskCreateInput struct {

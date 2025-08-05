@@ -20,7 +20,7 @@ var addCmd = &cobra.Command{
             fmt.Println(err)
             return
         }
-        fmt.Printf("task added with Id:%d\n", task.Id)
+        fmt.Printf("task added with Id:%d\n", task.ID)
 	},
 }
 
